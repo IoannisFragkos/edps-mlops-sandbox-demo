@@ -19,8 +19,11 @@ WORKDIR /app
 RUN useradd -m uvicorn
 COPY --from=builder /install /usr/local
 COPY . .
+# **Train the demo model inside the image** so the API is ready
+RUN python scripts/train.py
 RUN chown -R uvicorn:uvicorn /app
 USER uvicorn
 
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Respect Cloud Run's $PORT (falls back to 8000 locally)
+CMD ["bash","-lc","uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
