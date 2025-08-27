@@ -1,4 +1,4 @@
-# EDPS MLOps Sandbox Demo
+# MLOps Sandbox Demo
 
 A **compact, audit-ready MLOps showcase** that demonstrates:
 - Containerised **FastAPI** inference service for a scikit-learn model
@@ -8,8 +8,6 @@ A **compact, audit-ready MLOps showcase** that demonstrates:
 - **Reproducibility & lineage**: fixed seeds, pinned dependencies, saved trained artifact
 - **Robustness check**: simple perturbation test + optional **IBM ART** adversarial evaluation
 - **Audit-ready docs**: model card, evaluation protocol, risk register
-
-> Tailored for an **EDPS Senior Data Scientist (AI sandboxes & audits)** audience: shows you can translate requirements into concrete ML/MLOps controls across the lifecycle.
 
 ---
 
