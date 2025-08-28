@@ -1,16 +1,16 @@
 import joblib
 import pathlib
-from typing import Tuple
+from typing import Tuple, Any
 import numpy as np
 
 ARTIFACTS_DIR = pathlib.Path(__file__).resolve().parents[1] / "artifacts"
 MODEL_PATH = ARTIFACTS_DIR / "model.joblib"
 META_PATH = ARTIFACTS_DIR / "metadata.json"
 
-_model = None
+_model: Any = None
 _meta = None
 
-def load_model() -> Tuple[object, dict]:
+def load_model() -> Tuple[Any, dict]:
     global _model, _meta
     if _model is None:
         if not MODEL_PATH.exists():
