@@ -67,7 +67,7 @@ Swagger UI shows both examples. Minimal JSON examples:
 
 **Flattened 64:**
 ```json
-{ "samples": [[0.0, 0.1, 0.2, /* ... 61 more ... */ 0.0]] }
+{ "samples": [[0.0, 0.1, 0.2, /* ... 60 more ... */ 0.0]] }
 ```
 
 **Nested 8×8:**

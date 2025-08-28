@@ -13,7 +13,7 @@ class PredictRequest(BaseModel):
         }
     )
 
-    @field_validator("samples")
+    @field_validator("samples", mode="before")
     @classmethod
     def validate_and_normalize(cls, v):
         if not v:
