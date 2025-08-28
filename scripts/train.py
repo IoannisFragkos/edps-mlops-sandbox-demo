@@ -24,7 +24,25 @@ def main():
     joblib.dump(clf, ARTIFACTS_DIR / "model.joblib")
     meta = {"seed": SEED, "test_accuracy": acc}
     (ARTIFACTS_DIR / "metadata.json").write_text(json.dumps(meta, indent=2))
+    # --- Save dataset-backed example payloads for Swagger examples
+    # Pick one representative sample each for digits 0, 3, 8
+    labels = [0, 3, 8]
+    examples = {}
+    for lbl in labels:
+        idx = int(np.where(y == lbl)[0][0])      # first occurrence
+        sample_flat = X[idx].tolist()            # 64-length, values in [0,1]
+        sample_nested = [sample_flat[i*8:(i+1)*8] for i in range(8)]
+        # Round for readability
+        sample_flat_r = [round(float(v), 3) for v in sample_flat]
+        sample_nested_r = [[round(float(v), 3) for v in row] for row in sample_nested]
+        examples[f"digit{lbl}_flat"]   = {"samples": [sample_flat_r]}
+        examples[f"digit{lbl}_nested"] = {"samples": [sample_nested_r]}
+
+    (ARTIFACTS_DIR / "example_payloads.json").write_text(json.dumps(examples, indent=2))
+    
     print(f"Saved model to {ARTIFACTS_DIR / 'model.joblib'} (test acc ~ {acc:.3f})")
+    print(f"Saved seed and test accuracy to {ARTIFACTS_DIR / 'metadata.json'}")
+    print(f"Saved example labels 0, 3 and 8 to {ARTIFACTS_DIR / 'example_payloads.json'}")
 
 if __name__ == "__main__":
     main()

@@ -11,19 +11,6 @@ app = FastAPI(title="EDPS MLOps Sandbox Demo")
 REQUESTS = Counter("requests_total", "Total requests", ["endpoint"])
 LATENCY = Histogram("request_latency_seconds", "Request latency", ["endpoint"])
 
-_EX_8x8_DIGIT0 = {"samples": [[[0,1,1,1,1,1,1,0],
-                               [0,1,0,0,0,0,1,0],
-                               [0,1,0,0,0,0,1,0],
-                               [0,1,0,0,0,0,1,0],
-                               [0,1,0,0,0,0,1,0],
-                               [0,1,0,0,0,0,1,0],
-                               [0,1,1,1,1,1,1,0],
-                               [0,0,0,0,0,0,0,0]]]}
-_EX_FLAT_DIGIT0 = {"samples": [[
-  0,1,1,1,1,1,1,0, 0,1,0,0,0,0,1,0, 0,1,0,0,0,0,1,0, 0,1,0,0,0,0,1,0,
-  0,1,0,0,0,0,1,0, 0,1,0,0,0,0,1,0, 0,1,1,1,1,1,1,0, 0,0,0,0,0,0,0,0
-]]}
-
 
 @app.get("/health")
 def health():
@@ -35,17 +22,42 @@ def metrics():
     data = generate_latest()
     return PlainTextResponse(content=data.decode("utf-8"), media_type=CONTENT_TYPE_LATEST)
 
-@app.post("/predict", response_model=PredictResponse)
-def predict_endpoint(
-    req: PredictRequest = Body(
-        ...,
-        example=_EX_8x8_DIGIT0,
-        examples={
-            "flattened_64": {"summary": "Flattened 64-length vector", "value": _EX_FLAT_DIGIT0},
-            "nested_8x8":  {"summary": "Nested 8×8 array (auto-flattened)", "value": _EX_8x8_DIGIT0},
-        },
-    )
-):
+# Load examples for Swagger from artifacts (created by scripts/train.py)
+def _load_examples():
+    import json, pathlib
+    artifacts = pathlib.Path(__file__).resolve().parents[1] / "artifacts" / "example_payloads.json"
+    if artifacts.exists():
+        data = json.loads(artifacts.read_text())
+        # FastAPI expects {"name": {"summary": "...", "value": {...}}}
+        return {k: {"summary": k.replace("_", " "), "value": v} for k, v in data.items()}
+    # Fallbacks if file missing
+    return {
+        "flattened_64": {"summary": "flattened 64 (fallback)", "value": {"samples": [[0.0]*64]}},
+        "nested_8x8":   {"summary": "nested 8×8 (fallback)",   "value": {"samples": [[[0.0]*8 for _ in range(8)]]}},
+    }
+
+_DOC_EXAMPLES = _load_examples()
+
+# Choose a sensible default example (prefer the nested digit-0 if present)
+if "digit0_nested" in _DOC_EXAMPLES:
+    _DEFAULT_EXAMPLE = _DOC_EXAMPLES["digit0_nested"]["value"]
+else:
+    # first available example's value
+    _DEFAULT_EXAMPLE = next(iter(_DOC_EXAMPLES.values()))["value"]
+
+@app.post("/predict", response_model=PredictResponse, 
+    openapi_extra={
+        "requestBody": {
+            "required": True,
+            "content": {
+                "application/json": {
+                    # this creates the Examples dropdown in Swagger
+                    "examples": _DOC_EXAMPLES
+                }
+            }
+        }
+    },)
+def predict_endpoint(req: PredictRequest):
     start = time()
     REQUESTS.labels(endpoint="/predict").inc()
     try:
