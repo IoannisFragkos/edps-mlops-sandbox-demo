@@ -1,6 +1,6 @@
 import joblib
 import pathlib
-from typing import Optional, Tuple
+from typing import Tuple
 import numpy as np
 
 ARTIFACTS_DIR = pathlib.Path(__file__).resolve().parents[1] / "artifacts"

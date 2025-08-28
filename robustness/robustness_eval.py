@@ -3,7 +3,8 @@
 - If IBM ART is installed, runs a tiny FGSM-style attack for illustration.
 """
 import numpy as np
-import joblib, pathlib, json
+import joblib
+import pathlib
 
 ARTIFACTS_DIR = pathlib.Path(__file__).resolve().parents[1] / "artifacts"
 MODEL_PATH = ARTIFACTS_DIR / "model.joblib"
@@ -17,9 +18,9 @@ def noise_test():
     # Simple holdout
     np.random.seed(42)
     idx = np.random.permutation(len(X))
-    X = X[idx]; y = y[idx]
-    X_tr, X_te = X[:1400], X[1400:]
-    y_tr, y_te = y[:1400], y[1400:]
+    X, y = X[idx], y[idx]
+    X_te = X[1400:]
+    y_te = y[1400:]
 
     clf = joblib.load(MODEL_PATH)
     base_acc = accuracy_score(y_te, clf.predict(X_te))
@@ -36,7 +37,7 @@ def art_demo():
         from art.estimators.classification import SklearnClassifier
         from sklearn.datasets import load_digits
         from sklearn.metrics import accuracy_score
-    except Exception as e:
+    except Exception:
         print("IBM ART not installed or import failed; skipping ART demo.")
         return
 
@@ -44,9 +45,9 @@ def art_demo():
     X = X / 16.0
     np.random.seed(42)
     idx = np.random.permutation(len(X))
-    X = X[idx]; y = y[idx]
-    X_tr, X_te = X[:1400], X[1400:]
-    y_tr, y_te = y[:1400], y[1400:]
+    X, y = X[idx], y[idx]
+    X_te = X[1400:]
+    y_te = y[1400:]
 
     clf = joblib.load(MODEL_PATH)
     art_clf = SklearnClassifier(model=clf, clip_values=(0.0, 1.0))

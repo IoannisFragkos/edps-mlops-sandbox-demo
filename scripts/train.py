@@ -4,7 +4,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import numpy as np
-import joblib, json, pathlib, random
+import joblib
+import json
+import pathlib
+import random
 
 ARTIFACTS_DIR = pathlib.Path(__file__).resolve().parents[1] / "artifacts"
 ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)

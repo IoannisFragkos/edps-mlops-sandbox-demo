@@ -1,10 +1,12 @@
-from fastapi import FastAPI, HTTPException, Body
+from fastapi import FastAPI, HTTPException
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from fastapi.responses import PlainTextResponse
 from app.schemas import PredictRequest, PredictResponse, ExplainResponse
 from app.model import predict, explain_global_importance
-import numpy as np
 from time import time
+import numpy as np
+import json
+import pathlib
 
 app = FastAPI(title="EDPS MLOps Sandbox Demo")
 
@@ -24,7 +26,6 @@ def metrics():
 
 # Load examples for Swagger from artifacts (created by scripts/train.py)
 def _load_examples():
-    import json, pathlib
     artifacts = pathlib.Path(__file__).resolve().parents[1] / "artifacts" / "example_payloads.json"
     if artifacts.exists():
         data = json.loads(artifacts.read_text())
