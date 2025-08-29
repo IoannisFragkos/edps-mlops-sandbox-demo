@@ -1,13 +1,22 @@
 # MLOps Sandbox Demo
 
 A **compact, audit-ready MLOps showcase** that demonstrates:
-- Containerised **FastAPI** inference service for a scikit-learn model
+- Containerised **FastAPI** inference service for a scikit-learn digits classifier
 - **CI/CD** with linting, tests, type checks, and container build/scan
 - **On‑prem (docker-compose)** and **cloud** (example: Cloud Run) deployment paths
 - **Observability & health**: `/health` and `/metrics` (Prometheus)
 - **Reproducibility & lineage**: fixed seeds, pinned dependencies, saved trained artifact
 - **Robustness check**: simple perturbation test + optional **IBM ART** adversarial evaluation
 - **Audit-ready docs**: model card, evaluation protocol, risk register
+
+---
+
+**Live demo (Google Cloud Run, europe-west1)**  
+- Base URL: https://edps-mlops-demo-270205068451.europe-west1.run.app  
+- Port: **443** (HTTPS; Cloud Run manages the port)  
+- Health: `/health` → returns `{"status":"ok"}`  
+- Docs: `/docs` (Swagger UI with request examples)  
+- Metrics: `/metrics` (Prometheus exposition)
 
 ---
 
