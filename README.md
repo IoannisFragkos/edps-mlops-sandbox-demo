@@ -1,13 +1,13 @@
 # MLOps Sandbox Demo
 
 A **compact, audit-ready MLOps showcase** that demonstrates:
-- Containerised **FastAPI** inference service for a scikit-learn digits classifier
-- **CI/CD** with linting, tests, type checks, and container build/scan
-- **On‑prem (docker-compose)** and **cloud** (example: Cloud Run) deployment paths
-- **Observability & health**: `/health` and `/metrics` (Prometheus)
-- **Reproducibility & lineage**: fixed seeds, pinned dependencies, saved trained artifact
-- **Robustness check**: simple perturbation test + optional **IBM ART** adversarial evaluation
-- **Audit-ready docs**: model card, evaluation protocol, risk register
+- **API**: FastAPI with `/predict`, `/explain`, `/health`, `/metrics`.
+- **Reproducible training**: `scripts/train.py` saves `artifacts/model.joblib` + `artifacts/metadata.json` (seed, test accuracy).
+- **Examples in docs**: Dataset-backed request bodies (digits **0/3/8**, flat & 8×8) rendered in the Swagger **Examples** dropdown.
+- **Docker**: Multi-stage build, non-root runtime, honors `$PORT` (defaults to 8000 locally).
+- **CI/CD**: Ruff, mypy (minimal ignores), pytest, Docker Buildx, **Trivy** image scan.
+- **Robustness** (optional): IBM ART demo behind an extra requirements file.
+- **Audit docs**: `docs/model_card.md`, `docs/evaluation_protocol.md`, `docs/risk_register.md`.
 
 ---
 
@@ -36,7 +36,7 @@ uvicorn app.main:app --reload
 # Build & run the API
 docker build -t edps-mlops-demo:latest .
 docker run -p 8000:8000 edps-mlops-demo:latest
-# Open http://127.0.0.1:8000/health and /metrics
+# Open http://127.0.0.1:8000/health, /metrics and /docs
 ```
 
 Or with **docker-compose**:
